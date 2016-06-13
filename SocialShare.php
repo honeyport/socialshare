@@ -1,12 +1,23 @@
 <?php
 
+
+/**
+ * Simple class to receive urls for sharing content on social networks
+ *
+ *
+ * @since   June 11, 2016
+ * @link    https://github.com/honeyport/socialshare
+ * @version 1.0.0
+ */
+
 class SocialShare {
 
 	/**
-	 * content for the share apis
+	 * params for the share apis
+	 * of the social networks
 	 * @var array
 	 */
-	private $_data = array();
+	private $_params = array();
 
 
 	/**
@@ -33,13 +44,23 @@ class SocialShare {
 		'whatsapp',
 	);
 
-	function __construct( $permalink, $title = null, $excerpt = null, $via = null ) {
 
-		$this->_data =  array(
+	/**
+	 * Creates a new SocialShare instance
+	 * @param string $permalink link to content
+	 * @param string $title     title of content
+	 * @param string $excerpt   excerpt of the content
+	 * @param string $via       source of content
+	 * @param string $text      message used for whatsapp, default: $title . ' ' . $permalink
+	 */
+	public function __construct( $permalink, $title = null, $excerpt = null, $via = null, $text = null ) {
+
+		$this->_params =  array(
 			'permalink' 	=>	$permalink,
 			'title'				=>	$title,
 			'excerpt'			=>	$excerpt,
 			'via' 				=>	$via,
+			'text' 				=>	( $text )? $text : $title . ' ' . $permalink,
 		);
 
 		return $this;
@@ -53,7 +74,7 @@ class SocialShare {
 	 * @param  array $query var => val
 	 * @return string        query
 	 */
-	private function create_query_string( $url, $query ) {
+	private function _create_query_string( $url, $query ) {
 		$query_string = '';
 
 		foreach ( $query as $var => $value ) {
@@ -81,8 +102,8 @@ class SocialShare {
 	 * @param  string $index data
 	 * @return mixed         data or null
 	 */
-	private function get_data( $index ) {
-		return ( isset( $this->_data[ $index ] ) ) ? $this->_data[ $index ] : null ;
+	private function _get_param( $index ) {
+		return ( isset( $this->_params[ $index ] ) ) ? $this->_params[ $index ] : null ;
 	}
 
 
@@ -125,7 +146,7 @@ class SocialShare {
 
 	/*---------------------------------------------
 	 *
-	 * 				provider methods
+	 * 				network methods
 	 *
 	 *
 	 ---------------------------------------------- */
@@ -139,12 +160,12 @@ class SocialShare {
 		$url = 'https://twitter.com/intent/tweet?';
 
 		$query = array(
-			'*url' 	=> $this->get_data( 'permalink' ),
-			'text'	=> $this->get_data( 'title' ),
-			'via'		=> $this->get_data( 'via' ),
+			'*url' 	=> $this->_get_param( 'permalink' ),
+			'text'	=> $this->_get_param( 'title' ),
+			'via'		=> $this->_get_param( 'via' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 	/**
@@ -155,10 +176,10 @@ class SocialShare {
 		$url = 'https://www.facebook.com/sharer/sharer.php?';
 
 		$query = array(
-			'*u' 	=> $this->get_data( 'permalink' ),
+			'*u' 	=> $this->_get_param( 'permalink' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 	/**
@@ -170,11 +191,11 @@ class SocialShare {
 		$url = 'https://plus.google.com/share?';
 
 		$query = array(
-			'*url' 	=> $this->get_data( 'permalink' ),
-			'hl' 	=> $this->get_data( 'lang' ),
+			'*url' 	=> $this->_get_param( 'permalink' ),
+			'hl' 	=> $this->_get_param( 'lang' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -188,14 +209,14 @@ class SocialShare {
 
 
 		$query = array(
-			'*url' 	=> $this->get_data( 'permalink' ),	// The url-encoded URL of the page that you wish to share.
+			'*url' 	=> $this->_get_param( 'permalink' ),	// The url-encoded URL of the page that you wish to share.
 			'*mini'	=> 'true',		// A required argument who's value must always be:  true
-			'title' 	=> $this->get_data( 'title' ),
-			'summary' 	=> $this->get_data( 'excerpt' ),
-			'source' 	=> $this->get_data( 'via' ),
+			'title' 	=> $this->_get_param( 'title' ),
+			'summary' 	=> $this->_get_param( 'excerpt' ),
+			'source' 	=> $this->_get_param( 'via' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -209,11 +230,11 @@ class SocialShare {
 
 		$query = array(
 			'op' => 'basic',
-			'*u' => $this->get_data( 'permalink' ),
-			'*t' 	=> $this->get_data( 'title' ),
+			'*u' => $this->_get_param( 'permalink' ),
+			'*t' 	=> $this->_get_param( 'title' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -226,12 +247,12 @@ class SocialShare {
 		$url = 'https://www.instapaper.com/hello2?';
 
 		$query = array(
-			'*url' => $this->get_data( 'permalink' ),
-			'title' 	=> $this->get_data( 'title' ),
-			'description' 	=> $this->get_data( 'excerpt' ),
+			'*url' => $this->_get_param( 'permalink' ),
+			'title' 	=> $this->_get_param( 'title' ),
+			'description' 	=> $this->_get_param( 'excerpt' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -244,11 +265,11 @@ class SocialShare {
 		$url = 'https://www.reddit.com/submit?';
 
 		$query = array(
-			'*url' => $this->get_data( 'permalink' ),
-			'*title' 	=> $this->get_data( 'title' ),
+			'*url' => $this->_get_param( 'permalink' ),
+			'*title' 	=> $this->_get_param( 'title' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -261,11 +282,11 @@ class SocialShare {
 		$url = 'https://getpocket.com/save?';
 
 		$query = array(
-			'*url' => $this->get_data( 'permalink' ),
-			'*title' 	=> $this->get_data( 'title' ),
+			'*url' => $this->_get_param( 'permalink' ),
+			'*title' 	=> $this->_get_param( 'title' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -278,11 +299,11 @@ class SocialShare {
 		$url = 'https://digg.com/submit?';
 
 		$query = array(
-			'*url' => $this->get_data( 'permalink' ),
-			'title' 	=> $this->get_data( 'title' ),
+			'*url' => $this->_get_param( 'permalink' ),
+			'title' 	=> $this->_get_param( 'title' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -295,11 +316,11 @@ class SocialShare {
 		$url = 'https://stumbleupon.com/submit?';
 
 		$query = array(
-			'*url' 		=> $this->get_data( 'permalink' ),
-			'title' 	=> $this->get_data( 'title' ),
+			'*url' 		=> $this->_get_param( 'permalink' ),
+			'title' 	=> $this->_get_param( 'title' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -312,11 +333,11 @@ class SocialShare {
 		$url = 'https://buffer.com/add';
 
 		$query = array(
-			'*url' 		=> $this->get_data( 'permalink' ),
-			'*text' 	=> $this->get_data( 'title' ),
+			'*url' 		=> $this->_get_param( 'permalink' ),
+			'*text' 	=> $this->_get_param( 'title' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -329,10 +350,10 @@ class SocialShare {
 		$url = 'https://www.tumblr.com/share/link?';
 
 		$query = array(
-			'*url' 		=> $this->get_data( 'permalink' ),
+			'*url' 		=> $this->_get_param( 'permalink' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -345,10 +366,10 @@ class SocialShare {
 		$url = 'https://vkontakte.ru/share.php?';
 
 		$query = array(
-			'*url' 		=> $this->get_data( 'permalink' ),
+			'*url' 		=> $this->_get_param( 'permalink' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -361,11 +382,11 @@ class SocialShare {
 		$url = 'https://www.yummly.com/urb/verify?';
 
 		$query = array(
-			'*url' 		=> $this->get_data( 'permalink' ),
-			'*title' 		=> $this->get_data( 'title' ),
+			'*url' 		=> $this->_get_param( 'permalink' ),
+			'*title' 		=> $this->_get_param( 'title' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -378,10 +399,10 @@ class SocialShare {
 		$url = 'https://www.xing.com/spi/shares/new?';
 
 		$query = array(
-			'*url' 	=> $this->get_data( 'permalink' ),
+			'*url' 	=> $this->_get_param( 'permalink' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -394,11 +415,11 @@ class SocialShare {
 		$url = 'https://del.icio.us/post?';
 
 		$query = array(
-			'*url' 	=> $this->get_data( 'permalink' ),
-			'*title' 	=> $this->get_data( 'title' ),
+			'*url' 	=> $this->_get_param( 'permalink' ),
+			'*title' 	=> $this->_get_param( 'title' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 
 
@@ -411,9 +432,9 @@ class SocialShare {
 		$url = 'whatsapp://send?';
 
 		$query = array(
-			'*text' 	=>  $this->get_data( 'title' ) . ' ' . $this->get_data( 'permalink' ),
+			'*text' 	=> $this->_get_param( 'text' ),
 		);
 
-		return $this->create_query_string( $url, $query );
+		return $this->_create_query_string( $url, $query );
 	}
 }
