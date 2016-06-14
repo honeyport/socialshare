@@ -60,10 +60,8 @@ class SocialShare {
 			'title'				=>	$title,
 			'excerpt'			=>	$excerpt,
 			'via' 				=>	$via,
-			'text' 				=>	( $text )? $text : $title . ' ' . $permalink,
+			'text' 				=>	( $text ) ? $text : $title . ' ' . $permalink,
 		);
-
-		return $this;
 
 	}
 
@@ -88,13 +86,13 @@ class SocialShare {
 
 				// only add to query if there is a value
 				if( $value !== null && $value !== '' ) {
-					$query_string .= '&' . ltrim($var, '*') . '=' . urlencode( $value );
+					$query_string .= '&' . ltrim( $var, '*' ) . '=' . urlencode( $value );
 				}
 
 			}
 		}
 
-		return $url . ltrim( $query_string, '&');
+		return $url . ltrim( $query_string, '&' );
 	}
 
 	/**
@@ -134,7 +132,7 @@ class SocialShare {
 		$urls = array();
 
 		foreach ( $networks as $network ) {
-			$url = call_user_func( array( $this, str_replace( '-', '_', $network) ) );
+			$url = call_user_func( array( $this, str_replace( '-', '_', $network ) ) );
 
 			if( $url ) {
 				$urls[ $network ] = $url;

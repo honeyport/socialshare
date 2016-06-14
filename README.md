@@ -1,5 +1,5 @@
-# SocialShare: Get Links To Share Content
-A Simple Library To Create Links For Sharing Content On Social Networks
+# SocialShare: Get Links To Share Content On Social Networks
+A Simple Library To Create Links For Sharing Content On Social Networks.
 
 
 ##
